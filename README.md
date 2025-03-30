@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# quick_mart
-=======
 # quickmart
 
 A new Flutter project.
@@ -9,12 +6,37 @@ A new Flutter project.
 
 This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+**How Everything is Connected**
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Step-by-step Flow:
+1 User clicks Login button → LoginCubit.login(email, password) is called.
+2 LoginCubit calls UserRepositoryImpl.login().
+3 UserRepositoryImpl calls UserRemoteDataSource.login().
+4 Fake API returns UserModel (or real API response).
+5 Converts UserModel → UserEntity and returns it.
+6 LoginCubit updates the UI state:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
->>>>>>> 61214cf (Initial commit)
+If successful → emit(LoginSuccess(user)) → UI shows success.
+If failed → emit(LoginFailure(error)) → UI shows error.
+
+
+┌──────────────────────────────────────────────┐
+│                  UI Layer (Presentation)     │  
+│       - Screens, Widgets                     │  
+│       - State Management (BLoC, Provider)    │  
+└──────────────────────────────────────────────┘
+                 │ Calls (through BLoC)  
+                 ▼  
+┌──────────────────────────────────────────────┐
+│         Domain Layer (Business Logic)        │  
+│       - Use Cases (LoginUseCase)             │  
+│       - Abstract Repositories                │  
+└──────────────────────────────────────────────┘
+             │ Calls (via Interface)  
+             ▼  
+┌──────────────────────────────────────────────┐
+│            Data Layer (API/DB)               │  
+│       - API Calls (UserRemoteDataSource)     │  
+│       - Database Operations (if needed)      │  
+│       - Repository Implementations           │  
+└──────────────────────────────────────────────┘
